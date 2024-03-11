@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Инфографика с использованием Chart.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="myChart" width="400" height="400"></canvas>
+    <script>
+        // Представим, что данные были запрошены и получены в следующем формате:
+        const data = {
+            labels: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь'],
+            datasets: [{
+                label: 'Посещаемость сайта за 6 месяцев',
+                data: [65, 59, 80, 81, 56, 55],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        };
+
+        // Настройка и создание графика
+        const config = {
+            type: 'line',
+            data: data,
+        };
+
+        const myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+    </script>
+</body>
+</html>
