@@ -1,35 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Инфографика с использованием Chart.js</title>
+    <title>Ввод и редактирование данных графика</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Ваши стили */
+    </style>
 </head>
 <body>
-    <canvas id="myChart" width="400" height="400"></canvas>
+    <div>
+        <input type="text" id="columnName" placeholder="Название столбца">
+        <input type="number" id="columnValue" placeholder="Значение">
+        <button onclick="addData()">Добавить данные</button>
+        <button onclick="createChart()">Построить график</button>
+    </div>
+    <canvas id="myChart"></canvas>
     <script>
-        // Представим, что данные были запрошены и получены в следующем формате:
+        let chart = null;
         const data = {
-            labels: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь'],
+            labels: [],
             datasets: [{
-                label: 'Посещаемость сайта за 6 месяцев',
-                data: [65, 59, 80, 81, 56, 55],
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                label: 'Данные пользователя',
+                data: [],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
             }]
         };
 
-        // Настройка и создание графика
-        const config = {
-            type: 'line',
-            data: data,
-        };
+        function addData() {
+            const columnName = document.getElementById('columnName').value.trim();
+            const columnValue = parseFloat(document.getElementById('columnValue').value);
+            if (columnName && !isNaN(columnValue)) {
+                data.labels.push(columnName);
+                data.datasets[0].data.push(columnValue);
+                document.getElementById('columnName').value = '';
+                document.getElementById('columnValue').value = '';
+                if (chart) {
+                    chart.update();
+                }
+            } else {
+                alert('Пожалуйста, заполните оба поля корректно.');
+            }
+        }
 
-        const myChart = new Chart(
-            document.getElementById('myChart'),
-            config
-        );
+        function createChart() {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            if (!chart) {
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        onClick: graphClickEvent,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } else {
+                chart.update();
+            }
+        }
+
+        function graphClickEvent(event, array) {
+            if (array.length > 0) {
+                const index = array[0].index;
+                const label = data.labels[index];
+                const value = data.datasets[0].data[index];
+                const newLabel = prompt(`Введите новое название для '${label}':`, label);
+                const newValue = prompt(`Введите новое значение для '${label}':`, value);
+                if (newLabel !== null && newValue !== null && !isNaN(newValue)) {
+                    data.labels[index] = newLabel;
+                    data.datasets[0].data[index] = parseFloat(newValue);
+                    chart.update();
+                }
+            }
+        }
     </script>
 </body>
 </html>
